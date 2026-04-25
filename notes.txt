@@ -1,0 +1,13 @@
+1- Create the web app (Next.js)
+    In the terminal, run exactly this:
+    npx create-next-app@latest web
+
+2- To update run: npm install -g npm@11.8.0
+
+3- Start the web app locally
+    Still in terminal: cd web npm run dev
+
+4-Then open your browser and go to:
+http://localhost:3000
+
+

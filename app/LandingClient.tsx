@@ -155,9 +155,6 @@ export default function LandingClient() {
             <a href="#features" className="qc-nav-link">
               Features
             </a>
-            <Link href="/login" className="qc-nav-link qc-nav-link--button">
-              Sign in
-            </Link>
           </nav>
         </div>
       </header>

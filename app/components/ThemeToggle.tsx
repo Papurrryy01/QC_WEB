@@ -1,20 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-type ThemeMode = "light" | "dark";
+import { useEffect } from "react";
 
 const STORAGE_KEY = "qc.theme";
 
-function resolveSavedTheme(): ThemeMode {
-  if (typeof window === "undefined") return "light";
-  const saved = window.localStorage.getItem(STORAGE_KEY);
-  return saved === "dark" ? "dark" : "light";
-}
-
-function applyTheme(theme: ThemeMode) {
+function applyTheme() {
   if (typeof document === "undefined") return;
-  document.documentElement.setAttribute("data-theme", theme);
+  document.documentElement.setAttribute("data-theme", "light");
 }
 
 export default function ThemeToggle({
@@ -22,17 +14,20 @@ export default function ThemeToggle({
 }: {
   className?: string;
 }) {
-  const [theme, setTheme] = useState<ThemeMode>(() => resolveSavedTheme());
-
   useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
+    applyTheme();
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(STORAGE_KEY, "light");
+    }
+  }, []);
 
   useEffect(() => {
     const onStorage = (event: StorageEvent) => {
       if (event.key !== STORAGE_KEY) return;
-      const nextTheme = event.newValue === "dark" ? "dark" : "light";
-      setTheme(nextTheme);
+      if (event.newValue !== "light") {
+        window.localStorage.setItem(STORAGE_KEY, "light");
+      }
+      applyTheme();
     };
 
     window.addEventListener("storage", onStorage);
@@ -40,9 +35,8 @@ export default function ThemeToggle({
   }, []);
 
   function toggleTheme() {
-    const nextTheme: ThemeMode = theme === "light" ? "dark" : "light";
-    setTheme(nextTheme);
-    window.localStorage.setItem(STORAGE_KEY, nextTheme);
+    applyTheme();
+    window.localStorage.setItem(STORAGE_KEY, "light");
   }
 
   return (
@@ -50,10 +44,10 @@ export default function ThemeToggle({
       type="button"
       onClick={toggleTheme}
       className={className ?? "qc-theme-toggle"}
-      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-      title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+      aria-label="Light mode locked"
+      title="Light mode locked"
     >
-      {theme === "light" ? "Dark" : "Light"}
+      Light
     </button>
   );
 }
